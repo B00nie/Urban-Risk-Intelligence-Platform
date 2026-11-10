@@ -173,7 +173,7 @@ function trustHtml(evt) {
                             <span class="font-mono">Eleva p/ 95%</span>
                         </button>
                         ` : `
-                        <p class="text-xs text-slate-400"><i class="fa-solid fa-lock mr-1"></i>Chancela oficial disponível apenas para perfis institucionais (Tela 1).</p>
+                        <p class="text-xs text-slate-400"><i class="fa-solid fa-lock mr-1"></i>Chancela oficial disponível apenas para contas institucionais (Defesa Civil / CCO).</p>
                         `}
                     </div>
                 </div>

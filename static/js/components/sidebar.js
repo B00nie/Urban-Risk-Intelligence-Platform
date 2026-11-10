@@ -1,9 +1,8 @@
-// Barra lateral com links reais para as oito páginas.
+// Barra lateral com links reais para as sete páginas internas (a Tela 1 é o login, fora da sessão).
 // Desktop: fixa ao lado do conteúdo. Celular: painel recolhível (botão no cabeçalho, Escape fecha, foco gerenciado).
 import * as state from '../core/state.js';
 
 const PAGES = [
-    { id: 'acesso', file: 'index.html', tela: 'T1', icon: 'fa-user-shield', label: 'Acesso e consentimento' },
     { id: 'painel', file: 'painel.html', tela: 'T2', icon: 'fa-map-location-dot', label: 'Visão geral e mapa' },
     { id: 'alertas', file: 'alertas.html', tela: 'T3', icon: 'fa-list-check', label: 'Lista priorizada', badge: 'navAlertCount' },
     { id: 'detalhes', file: 'detalhes.html', tela: 'T4', icon: 'fa-diagram-project', label: 'Detalhes e ciclo de vida' },

@@ -1,12 +1,7 @@
-// Ponto de entrada comum das oito páginas (ES module, sem bundler).
-// Monta cabeçalho e barra lateral, carrega os dados (API Flask/SQLite ou modo local) e inicializa
-// apenas o módulo da página atual, indicado por <body data-page="...">.
-import { fetchEvents } from './core/api.js';
-import * as state from './core/state.js';
-import { ensureSeedNotifications } from './core/actions.js';
-import { renderHeader, updateHeader } from './components/header.js';
-import { initSidebar, updateSidebarCounts } from './components/sidebar.js';
-import { showToast } from './components/toast.js';
+// Ponto de entrada comum das oito páginas (ES module, sem bundler), indicado por <body data-page="...">.
+// Login (acesso): só o módulo da tela; nenhum estado ou dado interno é carregado antes de autenticar.
+// Páginas internas: 1) sessão verificada (guard.js); 2) estado, componentes e dados; 3) módulo da página.
+import { requireSession, revalidateOnHistoryReturn } from './core/guard.js';
 
 const PAGE_MODULES = {
     acesso: () => import('./pages/acesso.js'),
@@ -28,40 +23,62 @@ async function start() {
         return;
     }
 
-    renderHeader();
-    initSidebar(pageId);
+    if (pageId === 'acesso') {
+        await (await loadPage()).init();
+        return;
+    }
+
+    const user = await requireSession();
+    if (!user) return; // a caminho do login
+    revalidateOnHistoryReturn();
+
+    const [state, actions, header, sidebar, toast, api] = await Promise.all([
+        import('./core/state.js'),
+        import('./core/actions.js'),
+        import('./components/header.js'),
+        import('./components/sidebar.js'),
+        import('./components/toast.js'),
+        import('./core/api.js')
+    ]);
+    state.bindUser(user.id);
+    header.renderHeader();
+    sidebar.initSidebar(pageId);
 
     // Módulo da página e dados carregam em paralelo. allSettled: se o módulo falhar, o modo de dados
-    // ainda é concluído (fetchEvents tem tempo limite de 5 s e não rejeita).
-    const [page, data] = await Promise.allSettled([loadPage(), fetchEvents()]);
-    state.initData(data.value ?? null);
-    ensureSeedNotifications();
-    updateHeader();
-    updateSidebarCounts();
+    // ainda é concluído (fetchEvents tem tempo limite de 5 s e só rejeita se a sessão acabou).
+    const [page, data] = await Promise.allSettled([loadPage(), api.fetchEvents()]);
+    if (data.status === 'rejected') throw data.reason;
+    state.initData(data.value);
+    actions.ensureSeedNotifications();
+    header.updateHeader();
+    sidebar.updateSidebarCounts();
     if (page.status === 'rejected') throw page.reason;
 
     const view = page.value.init() || {};
 
     // Um único ouvinte por página: atualiza o cabeçalho, a barra lateral e a página ativa.
     state.onChange(() => {
-        updateHeader();
-        updateSidebarCounts();
+        header.updateHeader();
+        sidebar.updateSidebarCounts();
         view.refresh?.();
     });
 
     const flash = state.takeFlash();
-    if (flash) showToast(flash.message, flash.type);
+    if (flash) toast.showToast(flash.message, flash.type);
 }
 
 // Separa arquivo que não chegou ao navegador (servidor ou rede) de exceção no próprio JavaScript.
 function startupErrorMessage(err) {
     const notDelivered = err instanceof TypeError && /dynamically imported module|module script failed/i.test(err.message);
-    return notDelivered
-        ? `Um arquivo JavaScript desta tela não chegou ao navegador (servidor parado, resposta interrompida ou arquivo ausente). Confira se o servidor está em execução e recarregue. Detalhe: ${err.message}`
-        : `Erro de JavaScript ao iniciar esta tela; não é falha de rede. Detalhe: ${err.name}: ${err.message}. A pilha completa está no console.`;
+    if (notDelivered) {
+        return `Um arquivo JavaScript desta tela não chegou ao navegador (servidor parado, resposta interrompida ou arquivo ausente). Confira se o servidor está em execução e recarregue. Detalhe: ${err.message}`;
+    }
+    // Mensagens de sessão (auth.js) já explicam o que houve.
+    return err.name === 'Error' ? err.message : `Erro de JavaScript ao iniciar esta tela; não é falha de rede. Detalhe: ${err.name}: ${err.message}. A pilha completa está no console.`;
 }
 
 start().catch(err => {
+    if (err.name === 'SessionEnded') return; // sessão expirou durante a carga: já a caminho do login
     console.error('Falha ao inicializar a página:', err);
     const box = document.createElement('div');
     box.setAttribute('role', 'alert');

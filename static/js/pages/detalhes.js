@@ -8,6 +8,9 @@ import { esc } from '../core/escape.js';
 
 function detailHtml(evt) {
     const persona = state.getPersona();
+    const enforcement = state.isApiMode()
+        ? 'A API do Flask também recusa estas ações para outros perfis (HTTP 403).'
+        : 'Modo demonstrativo: restrição só no navegador, que pode ser contornada.';
     const allowed = allowedTransitions(evt.state);
     const normalizationCount = state.getNormalizationCount(evt.id);
     const calc = calculateRiskScoreRN02(evt);
@@ -169,7 +172,7 @@ function detailHtml(evt) {
                         ${persona.isAgent ? `
                         <p class="text-xs text-slate-400">
                             Controles demonstrativos para a Defesa Civil (Cap. Roberto) e Concessionárias (Eng. Lucas) transicionarem o estado do evento.
-                            Restrição apenas de interface — o protótipo não tem autenticação real.
+                            ${enforcement}
                         </p>
                         ${allowed.length ? '' : '<p class="text-xs text-slate-300"><i class="fa-solid fa-lock mr-1"></i>Evento em estado final: nenhuma ação de moderação disponível.</p>'}
                         <div class="grid grid-cols-2 gap-2">
@@ -190,8 +193,8 @@ function detailHtml(evt) {
                         <p class="text-xs text-slate-400">
                             <i class="fa-solid fa-lock mr-1"></i>
                             Validação oficial, monitoramento, encerramento e descarte são exclusivos de perfis institucionais.
-                            Para demonstrar, selecione Cap. Roberto (Defesa Civil) ou Eng. Lucas (CCO) na Tela 1.
-                            Restrição apenas de interface — o protótipo não tem autenticação real.
+                            Para demonstrar, saia e entre com a conta de Cap. Roberto (Defesa Civil) ou Eng. Lucas (CCO).
+                            ${enforcement}
                         </p>
                         `}
                     </div>

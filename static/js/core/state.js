@@ -1,24 +1,29 @@
-// Estado da demonstração e persistência entre páginas.
-// Único módulo que acessa o sessionStorage: os dados duram só enquanto a aba estiver aberta.
-// Guarda apenas o id da persona e dados demonstrativos; nunca credenciais, segredos ou dados pessoais reais.
-import { PERSONAS, SEED_EVENTS, SEED_ZONES } from './data.js';
+// Estado da demonstração e persistência entre páginas (sessionStorage: dura só enquanto a aba estiver aberta).
+// A sessão de login fica em auth.js; aqui ficam só preferências e dados demonstrativos, nunca credenciais.
+// O estado do usuário (consentimentos, zonas, notificações...) pertence à conta em ownerId e é
+// descartado no logout ou na troca de conta; os eventos do modo local são compartilhados e ficam.
+import { SEED_EVENTS, SEED_ZONES } from './data.js';
+import { currentUser } from './auth.js';
 
 const STORAGE_KEY = 'urbanRisk.sessao.v1';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 
-function defaults() {
+function userDefaults() {
     return {
-        personaId: 'mariana',
-        consents: { geo: true, anon: true, push: true },
+        ownerId: null,          // conta dona deste estado
+        consents: { geo: false, anon: false, push: false }, // definidos no login; opcionais começam desmarcados
         zones: clone(SEED_ZONES),
         notifications: [],
         notifSeq: 0,
         notifSource: null,      // modo de dados para o qual as notificações iniciais foram geradas
         normalization: {},      // indicações "Já Normalizou" por evento (só nesta sessão do navegador)
-        localEvents: null,      // eventos do modo demonstrativo local (null = ainda não carregados)
         flash: null             // mensagem a exibir na próxima página
     };
+}
+
+function defaults() {
+    return { ...userDefaults(), localEvents: null }; // localEvents: eventos do modo local (null = não carregados)
 }
 
 function load() {
@@ -86,11 +91,20 @@ export function saveEvents() {
     }
 }
 
-// --- Persona e consentimentos ------------------------------------------------------------
-export const getPersona = () => PERSONAS[session.personaId] || PERSONAS.mariana;
+// --- Usuário conectado e consentimentos ---------------------------------------------------
+// O perfil vem da sessão (servidor no Flask, conta fictícia no modo demonstrativo); não há troca aqui.
+export const getPersona = () => currentUser();
 
-export function setPersona(personaId) {
-    session.personaId = PERSONAS[personaId] ? personaId : 'mariana';
+// Estado de outra conta (sessão anterior que expirou sem logout) não passa para a conta atual.
+export function bindUser(userId) {
+    if (session.ownerId === userId) return;
+    Object.assign(session, userDefaults(), { ownerId: userId });
+    save();
+}
+
+// Logout: apaga só o estado do usuário; eventos compartilhados do modo local continuam.
+export function clearUserState() {
+    Object.assign(session, userDefaults());
     save();
 }
 

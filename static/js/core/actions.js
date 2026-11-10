@@ -51,14 +51,18 @@ export function markAllNotificationsRead() {
 
 // --- Persistência das alterações de eventos -------------------------------------------------
 // Modo local: grava na sessão do navegador. Modo API: grava no SQLite e avisa se a API não confirmar.
+// Em criações, o servidor devolve o evento com id, autor e cálculo definidos por ele: a tela adota esses valores.
 async function persistEvent(evt, actionType) {
     state.saveEvents();
     if (!state.isApiMode()) return true;
-    const ok = await syncEvent(evt, actionType);
-    if (!ok) {
+    const res = await syncEvent(evt, actionType);
+    if (res.ok && res.data?.event) Object.assign(evt, res.data.event);
+    if (res.status === 403) {
+        showToast(`O servidor recusou a operação em ${evt.id} (sem permissão para este perfil): ${res.error || 'HTTP 403'}. Nada foi gravado no SQLite.`, 'warning');
+    } else if (!res.ok && res.status !== 401) {
         showToast(`A API local não confirmou a gravação de ${evt.id}: a alteração aparece só nesta página e não foi gravada no SQLite.`, 'warning');
     }
-    return ok;
+    return res.ok;
 }
 
 // --- RF08: validação cruzada e "Já Normalizou" ----------------------------------------------
@@ -104,10 +108,10 @@ export function reportEventNormalized(eventId) {
 
 // --- RF11: moderação por agente local -------------------------------------------------------
 export async function changeEventState(eventId, newState, validateAsOfficial) {
-    // Guarda de interface (não é autorização segura: não há autenticação real no protótipo).
+    // Guarda de interface. No Flask, a API também exige perfil institucional (403); no modo demonstrativo, não há servidor.
     const persona = state.getPersona();
     if (!persona.isAgent) {
-        showToast('Ação restrita a perfis institucionais (Defesa Civil / CCO). Selecione Cap. Roberto ou Eng. Lucas na Tela 1.', 'warning');
+        showToast('Ação restrita a perfis institucionais (Defesa Civil / CCO). Entre com a conta de Cap. Roberto ou Eng. Lucas.', 'warning');
         return;
     }
     const evt = state.findEvent(eventId);
@@ -210,13 +214,13 @@ export async function simulateIncomingSensorEvent() {
     sensorEvt.state = calc.nc >= NC_LIMIAR_CONFIRMACAO ? 'Alerta Emitido' : 'Em Validação';
 
     state.addEvent(sensorEvt);
-    await persistEvent(sensorEvt, 'create');
+    await persistEvent(sensorEvt, 'sensor'); // ferramenta de simulação: no Flask, o servidor monta a leitura
 
     if (calc.nc >= NC_LIMIAR_CONFIRMACAO) {
         state.addNotification(createNotification(sensorEvt, 'sensor', 'Agora'));
     }
     state.emitChange();
-    showToast(`Leitura de sensor simulada (${id}): ${calc.label}, Score ${calc.score}, Confiança ${calc.nc}%.`, calc.band === 'CRITICO' ? 'critical' : 'warning');
+    showToast(`Leitura de sensor simulada (${sensorEvt.id}): ${calc.label}, Score ${calc.score}, Confiança ${calc.nc}%.`, calc.band === 'CRITICO' ? 'critical' : 'warning');
 }
 
 // Push simulado para o alerta ativo de maior score; a prioridade exibida vem da RN02 (não é presumida P1).

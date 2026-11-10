@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acesso e consentimento — Urban Risk Intelligence Platform (GS 2026.2)</title>
+    <title>Entrar — Urban Risk Intelligence Platform (GS 2026.2)</title>
     <!-- Google Fonts: Inter & JetBrains Mono -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
@@ -15,164 +15,161 @@
 </head>
 <body data-page="acesso" class="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
     <a href="#conteudo" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-indigo-600 focus:text-white focus:text-xs focus:font-semibold">Pular para o conteúdo</a>
-    <div class="app-shell">
-        <!-- Barra lateral de navegação (preenchida por static/js/components/sidebar.js) -->
-        <aside id="appSidebar" class="app-sidebar" aria-label="Navegação entre as telas"></aside>
-        <div id="sidebarBackdrop" class="app-backdrop" hidden></div>
-
-        <div class="app-column">
-            <!-- Cabeçalho comum (preenchido por static/js/components/header.js) -->
-            <header id="appHeader" class="sticky top-0 z-40 bg-slate-900/95 border-b border-slate-800 px-4 lg:px-8 py-3"></header>
-
-            <!-- Tela 1: Acesso e consentimento -->
-            <main id="conteudo" class="page-content flex-1 max-w-[105rem] w-full mx-auto px-4 lg:px-8 py-6">
-                <!-- Aparece só se a inicialização falhar ou não terminar (ver static/js/boot-guard.js) -->
-                <div id="bootNotice" class="boot-notice mb-4 p-4 rounded-xl bg-amber-950/40 border border-amber-500/40 text-sm text-amber-200">
-                    Esta tela não terminou de carregar. Recarregue a página e verifique a conexão e o servidor (Flask ou servidor local). Abrir o arquivo diretamente (file://) não funciona.
+    <div class="min-h-screen flex flex-col">
+        <!-- Cabeçalho do login: sem navegação interna nem ações (nada é acessível antes de entrar) -->
+        <header class="bg-slate-900/95 border-b border-slate-800 px-4 lg:px-8 py-3">
+            <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                        <i class="fa-solid fa-shield-halved text-white text-lg" aria-hidden="true"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-bold text-base md:text-lg tracking-tight text-white">Urban Risk Intelligence</p>
+                        <p class="hidden md:block text-xs text-slate-400">Monitoramento Integrado de Riscos Urbanos • CitizenTech GS 2026.2</p>
+                    </div>
                 </div>
-        <section>
+                <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                    <span class="px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-200 font-semibold">
+                        <i class="fa-solid fa-flask mr-1" aria-hidden="true"></i>Protótipo acadêmico — FIAP GS 2026.2
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 text-slate-300">
+                        <i class="fa-solid fa-key text-indigo-400" aria-hidden="true"></i>
+                        <span id="authModeBanner">Verificando modo de acesso…</span>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tela 1: Acesso e consentimento -->
+        <main id="conteudo" class="flex-1 max-w-6xl w-full mx-auto px-4 lg:px-8 py-6">
+            <!-- Aparece só se a inicialização falhar ou não terminar (ver static/js/boot-guard.js) -->
+            <div id="bootNotice" class="boot-notice mb-4 p-4 rounded-xl bg-amber-950/40 border border-amber-500/40 text-sm text-amber-200">
+                Esta tela não terminou de carregar. Recarregue a página e verifique a conexão e o servidor (Flask ou servidor local). Abrir o arquivo diretamente (file://) não funciona.
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                <!-- Left Column: Persona Selection & Authentication -->
-                <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-                    <div class="flex items-center justify-between mb-4">
+                <!-- Formulário de login + consentimento LGPD -->
+                <section aria-labelledby="loginTitle" class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
                         <span class="inline-block px-2.5 py-1 rounded-md text-xs font-mono font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                             TELA 1 • RF01 / RNF05 / RN03
                         </span>
-                        <span class="text-xs text-slate-400"><i class="fa-solid fa-key mr-1"></i> Seleção de persona (sem autenticação real)</span>
                     </div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white tracking-tight mb-2">Acesso à Plataforma e Perfil Operacional</h2>
-                    <p class="text-sm text-slate-400 mb-6">
-                        Selecione uma das <strong>Personas documentadas na seção 1.2</strong> para simular a navegação pelos fluxos de Morador, Coordenador da Defesa Civil ou Operador de Serviço Público (CCO).
+                    <h1 id="loginTitle" class="text-xl md:text-2xl font-bold text-white tracking-tight mb-2">Entrar na plataforma</h1>
+                    <p class="text-sm text-slate-400 mb-5">
+                        O perfil operacional (Moradora, Defesa Civil ou Operador CCO) pertence à conta e não pode ser trocado depois de entrar. Para usar outro perfil, saia e entre com a outra conta.
                     </p>
 
-                    <!-- Persona Cards -->
-                    <div class="space-y-3 mb-6">
-                        <!-- Persona 1: Mariana -->
-                        <div data-persona="mariana" role="button" tabindex="0" id="personaCard-mariana" class="cursor-pointer p-4 rounded-xl border-2 border-indigo-500 bg-indigo-950/30 transition flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 text-xl shrink-0">
-                                <i class="fa-solid fa-person-walking-luggage"></i>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
-                                    <h3 class="font-bold text-white">Mariana Costa (29 anos)</h3>
-                                    <span class="px-2 py-0.5 rounded text-xs font-semibold bg-indigo-500/30 text-indigo-200">Moradora • Transporte Público</span>
-                                </div>
-                                <p class="text-xs text-slate-300 mt-1">
-                                    Reside na Zona Sul (Vila Mariana) e trabalha no Centro. Recebe alertas proativos de enchentes e quedas de luz na sua rota e envia relatos colaborativos anonimizados.
-                                </p>
-                                <div class="mt-2 flex flex-wrap gap-2 text-xs font-mono text-slate-400">
-                                    <span><i class="fa-solid fa-fingerprint text-emerald-400"></i> ID Público: Morador #A8F92B</span>
-                                    <span class="hidden sm:inline" aria-hidden="true">•</span>
-                                    <span>Permissão: Visualização, Relato (RF07) e Confirmação Cruzada (RF08)</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div id="loginNotice" role="status" class="hidden mb-4 p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-sm text-indigo-200"></div>
 
-                        <!-- Persona 2: Cap. Roberto -->
-                        <div data-persona="roberto" role="button" tabindex="0" id="personaCard-roberto" class="cursor-pointer p-4 rounded-xl border border-slate-800 bg-slate-800/40 hover:border-slate-700 transition flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-400 text-xl shrink-0">
-                                <i class="fa-solid fa-helmet-safety"></i>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
-                                    <h3 class="font-bold text-white">Cap. Roberto Mendes (44 anos)</h3>
-                                    <span class="px-2 py-0.5 rounded text-xs font-semibold bg-red-500/20 text-red-300">Agente Local • Defesa Civil</span>
-                                </div>
-                                <p class="text-xs text-slate-300 mt-1">
-                                    Coordenador de Operações de Campo. Audita a origem e confiança de cada alerta, valida chamados manualmente (eleva NC para 95%) e gerencia estados de emergência.
-                                </p>
-                                <div class="mt-2 flex flex-wrap gap-2 text-xs font-mono text-slate-400">
-                                    <span><i class="fa-solid fa-id-badge text-amber-400"></i> Credencial: DEFCIV-SP-019</span>
-                                    <span class="hidden sm:inline" aria-hidden="true">•</span>
-                                    <span>Permissão Total: Moderação e Mudança de Estado (RF11)</span>
-                                </div>
-                            </div>
-                        </div>
+                    <!-- method="post" e botão desabilitado até o JavaScript iniciar: a senha nunca vai para a URL -->
+                    <form id="loginForm" method="post" novalidate class="space-y-4" aria-describedby="loginError">
+                        <div id="loginError" role="alert" class="hidden p-3 rounded-xl bg-red-950/40 border border-red-500/40 text-sm text-red-200"></div>
 
-                        <!-- Persona 3: Eng. Lucas -->
-                        <div data-persona="lucas" role="button" tabindex="0" id="personaCard-lucas" class="cursor-pointer p-4 rounded-xl border border-slate-800 bg-slate-800/40 hover:border-slate-700 transition flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-xl shrink-0">
-                                <i class="fa-solid fa-bolt"></i>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
-                                    <h3 class="font-bold text-white">Eng. Lucas Oliveira (35 anos)</h3>
-                                    <span class="px-2 py-0.5 rounded text-xs font-semibold bg-amber-500/20 text-amber-300">Operador CCO • Concessionária</span>
-                                </div>
-                                <p class="text-xs text-slate-300 mt-1">
-                                    Operador Técnico do Centro de Controle Operacional (Energia, Água e Transporte). Cruza telemetria com clusters de relatos comunitários num raio de 500m.
-                                </p>
-                                <div class="mt-2 flex flex-wrap gap-2 text-xs font-mono text-slate-400">
-                                    <span><i class="fa-solid fa-tower-broadcast text-amber-400"></i> Credencial: CCO-INFRA-402</span>
-                                    <span class="hidden sm:inline" aria-hidden="true">•</span>
-                                    <span>Permissão: Validação Técnica de Serviços e Previsão de Retorno (RF11)</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Action Button to Enter Platform -->
-                    <button type="button" id="btnEnterPlatform" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-right-to-bracket"></i>
-                        <span>Entrar como Persona Selecionada (simulado) e Abrir o Painel (Tela 2)</span>
-                    </button>
-                </div>
-
-                <!-- Right Column: Explicit LGPD Consent & Data Sanitizer Architecture -->
-                <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                            <i class="fa-solid fa-user-lock text-lg"></i>
-                        </div>
                         <div>
-                            <h3 class="font-bold text-white">Termo Granular de Privacidade (LGPD)</h3>
-                            <p class="text-xs text-slate-400">Lei nº 13.709/2018 • Camada Transversal Data Sanitizer</p>
+                            <label for="loginIdentifier" class="block text-xs font-semibold text-slate-300 mb-1.5">Usuário ou e-mail</label>
+                            <input id="loginIdentifier" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required maxlength="254"
+                                   class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-indigo-500 aria-[invalid=true]:border-red-500">
                         </div>
-                    </div>
 
-                    <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3 text-xs text-slate-300">
-                        <label class="flex items-start gap-3 cursor-pointer">
-                            <input type="checkbox" id="lgpdConsentGeo" checked class="mt-1 w-4 h-4 rounded accent-indigo-500">
-                            <span>
-                                <strong class="text-white">Geolocalização Truncada (Raio de 100m - RN03):</strong> Autorizo o uso da minha localização apenas para recebimento de alertas nas minhas zonas e validação de ocorrências, com dispersão automática de 100m para ocultar minha residência exata.
-                            </span>
-                        </label>
-                        <hr class="border-slate-800">
-                        <label class="flex items-start gap-3 cursor-pointer">
-                            <input type="checkbox" id="lgpdConsentAnon" checked class="mt-1 w-4 h-4 rounded accent-indigo-500">
-                            <span>
-                                <strong class="text-white">Anonimização na Origem (Pseudonimização):</strong> Estou ciente de que meus relatos comunitários são desacoplados do meu nome civil e CPF no API Gateway, exibindo publicamente apenas o código <code class="text-emerald-400">#ID-Hash</code>.
-                            </span>
-                        </label>
-                        <hr class="border-slate-800">
-                        <label class="flex items-start gap-3 cursor-pointer">
-                            <input type="checkbox" id="lgpdConsentPush" checked class="mt-1 w-4 h-4 rounded accent-indigo-500">
-                            <span>
-                                <strong class="text-white">Notificações Prioritárias de Risco (P1 a P4):</strong> Aceito receber avisos emergenciais sobre alagamentos, ilhas de calor e interrupções de serviços essenciais nas zonas que eu cadastrar.
-                            </span>
-                        </label>
-                    </div>
-
-                    <!-- Architectural Security Proof Box -->
-                    <div class="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-xs space-y-2">
-                        <div class="font-semibold text-emerald-300 flex items-center gap-2">
-                            <i class="fa-solid fa-shield-check"></i>
-                            <span>Segurança e LGPD (RNF05) — o que este protótipo demonstra:</span>
+                        <div>
+                            <label for="loginPassword" class="block text-xs font-semibold text-slate-300 mb-1.5">Senha</label>
+                            <div class="relative">
+                                <input id="loginPassword" name="password" type="password" autocomplete="current-password" required maxlength="1024" aria-describedby="passwordHint"
+                                       class="w-full bg-slate-950 border border-slate-700 rounded-lg pl-3 pr-12 py-2.5 text-sm text-white outline-none focus:border-indigo-500 aria-[invalid=true]:border-red-500">
+                                <button type="button" id="togglePassword" aria-controls="loginPassword" aria-pressed="false"
+                                        class="absolute inset-y-0 right-0 w-11 flex items-center justify-center text-slate-400 hover:text-white rounded-r-lg transition">
+                                    <i id="togglePasswordIcon" class="fa-solid fa-eye" aria-hidden="true"></i>
+                                    <span class="sr-only">Mostrar senha</span>
+                                </button>
+                            </div>
+                            <p id="passwordHint" class="mt-1.5 text-xs text-amber-200">
+                                <i class="fa-solid fa-triangle-exclamation mr-1" aria-hidden="true"></i>Não use uma senha pessoal: este é um protótipo acadêmico.
+                            </p>
                         </div>
-                        <ul class="space-y-1 text-slate-300 list-disc list-inside">
-                            <li><strong>Arquitetura-alvo (não implementada aqui):</strong> autenticação JWT, TLS 1.3 em trânsito e AES-256 em repouso no Cofre LGPD.</li>
-                            <li><strong>API Flask/SQLite:</strong> tabelas separadas para eventos e dados pessoais; pseudonimização por hash e truncamento de coordenadas.</li>
-                            <li><strong>Demonstração na Tela 8:</strong> portabilidade (JSON) e Direito ao Esquecimento.</li>
+
+                        <fieldset class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3 text-xs text-slate-300">
+                            <legend class="px-1 font-semibold text-white">
+                                <i class="fa-solid fa-user-lock text-emerald-400 mr-1" aria-hidden="true"></i>Privacidade nesta demonstração
+                            </legend>
+                            <!-- Ciência do aviso (não é autorização de tratamento): única marcação exigida para entrar -->
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" id="lgpdConsentAnon" class="mt-1 w-4 h-4 rounded accent-indigo-500">
+                                <span>
+                                    <strong class="text-white">Ciência do aviso de privacidade da demonstração — necessária para entrar:</strong> Li que meus relatos comunitários são exibidos publicamente só com um código pseudônimo (<code class="text-emerald-400">#ID-Hash</code>), sem nome civil ou CPF, e que as coordenadas são truncadas em cerca de 100m (RN03). Esta marcação não autoriza outros usos dos meus dados.
+                                </span>
+                            </label>
+                            <hr class="border-slate-800">
+                            <p class="text-slate-400">Escolhas opcionais (não impedem a entrada; nada é solicitado ao navegador agora):</p>
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" id="lgpdConsentGeo" class="mt-1 w-4 h-4 rounded accent-indigo-500">
+                                <span>
+                                    <strong class="text-white">Geolocalização truncada (raio de 100m — RN03) — opcional:</strong> Autorizo o uso da minha localização apenas para alertas nas minhas zonas e validação de ocorrências, com dispersão de 100m para ocultar minha residência exata.
+                                </span>
+                            </label>
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" id="lgpdConsentPush" class="mt-1 w-4 h-4 rounded accent-indigo-500">
+                                <span>
+                                    <strong class="text-white">Notificações prioritárias de risco (P1 a P4) — opcional:</strong> Aceito receber avisos sobre alagamentos, ilhas de calor e interrupções de serviços essenciais nas zonas que eu cadastrar.
+                                </span>
+                            </label>
+                            <p class="text-slate-400">As escolhas valem só para esta sessão do navegador e podem ser revogadas na Tela 8 (Direito ao Esquecimento). Protótipo acadêmico: não garante conformidade com a LGPD.</p>
+                        </fieldset>
+
+                        <button type="submit" id="btnLogin" disabled class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
+                            <i id="btnLoginIcon" class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+                            <span id="btnLoginLabel">Entrar</span>
+                        </button>
+                    </form>
+                </section>
+
+                <div class="lg:col-span-5 space-y-6">
+                    <!-- Modo demonstrativo (hospedagem estática): contas fictícias com senhas públicas -->
+                    <section id="demoAccountsPanel" hidden aria-labelledby="demoAccountsTitle" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 text-xs">
+                        <div>
+                            <h2 id="demoAccountsTitle" class="font-semibold text-sm text-white">Contas de demonstração para avaliação</h2>
+                            <p class="text-slate-400 mt-1">
+                                Contas fictícias (personas da seção 1.2), com credenciais <strong class="text-slate-200">públicas</strong> para a avaliação acadêmica. Não são senhas pessoais nem recomendação de uso real.
+                            </p>
+                        </div>
+                        <ul id="demoAccountsList" class="space-y-2"></ul>
+                        <p class="text-slate-300">Senha de todas as contas: <code class="font-mono text-slate-100">1234</code></p>
+                        <p class="text-xs text-amber-200">
+                            <i class="fa-solid fa-circle-info mr-1" aria-hidden="true"></i>Neste modo não há servidor: a sessão e o bloqueio das páginas ficam no navegador e podem ser contornados. Não é autenticação segura.
+                        </p>
+                    </section>
+
+                    <!-- Modo Flask: autenticação real no servidor local -->
+                    <section id="serverAuthPanel" hidden aria-labelledby="serverAuthTitle" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-3">
+                        <h2 id="serverAuthTitle" class="font-bold text-white">Autenticação no servidor Flask local</h2>
+                        <p class="text-xs text-slate-300">
+                            As contas de teste são configuradas no servidor por quem o executa (veja o README). As senhas não aparecem nesta tela e não são enviadas a nenhum outro lugar.
+                        </p>
+                        <ul class="space-y-1 text-xs text-slate-300 list-disc list-inside">
+                            <li>Senha guardada só como hash (scrypt); identidade e perfil definidos pelo servidor.</li>
+                            <li>Sessão em cookie HttpOnly, revogada no servidor ao sair; expira em 2 horas.</li>
+                            <li>Tentativas de login limitadas; a mensagem de erro não revela se a conta existe.</li>
                         </ul>
-                    </div>
+                    </section>
+
+                    <!-- O que este protótipo demonstra em segurança e LGPD -->
+                    <section aria-labelledby="securityTitle" class="p-5 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 text-xs space-y-2">
+                        <h2 id="securityTitle" class="font-semibold text-emerald-300 flex items-center gap-2">
+                            <i class="fa-solid fa-shield-check" aria-hidden="true"></i>
+                            <span>Segurança e LGPD (RNF05) — o que este protótipo demonstra</span>
+                        </h2>
+                        <ul class="space-y-1 text-slate-300 list-disc list-inside">
+                            <li><strong>Flask local:</strong> login, sessão revogável, CSRF e verificação de perfil na API; tabelas separadas para eventos e dados pessoais.</li>
+                            <li><strong>Link público (estático):</strong> acesso simulado no navegador, sem servidor.</li>
+                            <li><strong>Arquitetura-alvo (não implementada aqui):</strong> TLS 1.3 em trânsito e AES-256 em repouso no Cofre LGPD.</li>
+                        </ul>
+                    </section>
                 </div>
             </div>
-        </section>
-            </main>
-        </div>
+        </main>
     </div>
 
-    <!-- Ponto de entrada (ES module): inicializa só o necessário para esta página -->
+    <!-- Ponto de entrada (ES module): nesta tela carrega só o login, sem dados internos -->
     <script src="static/js/boot-guard.js"></script>
     <script type="module" src="static/js/main.js"></script>
 </body>

@@ -17,12 +17,12 @@ Plataforma integrada de monitoramento, validação cruzada e priorização de al
 * **Front-end (8 páginas HTML + `static/`):** HTML5, Tailwind CSS 3.4.17 (arquivo CSS gerado, em `static/css/tailwind.css`), JavaScript com **módulos ES nativos** e **Leaflet.js** (mapa georreferenciado de São Paulo com raios de impacto de 500m). Sem framework nem bundler; o site publicado não executa Node. Cada tela é uma página própria, com navegação por barra lateral — decisão de arquitetura e apresentação do grupo, não exigência do enunciado.
   * **Mapa base:** tiles padrão do **OpenStreetMap** (`tile.openstreetmap.org`, HTTPS, com atribuição visível). Uso interativo comum, sem prefetch nem download em massa, conforme a [política de tiles da OSMF](https://operations.osmfoundation.org/policies/tiles/).
 * **Back-end (`app.py`):** **Python 3 + Flask** servindo API REST e motor de regras determinístico (`RN01`, `RN02` e `RN03`).
-* **Banco de Dados (`urban_risk_platform.db`):** **SQLite3** com tabelas separadas para ocorrências georreferenciadas (`risk_events`) e dados pessoais (`users_lgpd_vault`), projetado para atender à **LGPD (Lei nº 13.709/2018)**. Criptografia AES-256, TLS 1.3, JWT, Redis, MQTT e WebSockets pertencem à **arquitetura-alvo** descrita no documento do projeto e não estão implementados neste protótipo acadêmico.
+* **Banco de Dados (`urban_risk_platform.db`):** **SQLite3** com tabelas separadas para ocorrências georreferenciadas (`risk_events`) e dados pessoais (`users_lgpd_vault`), projetado para atender à **LGPD (Lei nº 13.709/2018)**. Criptografia AES-256, TLS 1.3, Redis, MQTT e WebSockets pertencem à **arquitetura-alvo** descrita no documento do projeto e não estão implementados neste protótipo acadêmico.
 
 ---
 
 ## Mapeamento das 8 Telas Obrigatórias no Protótipo
-1. **Tela 1 — Acesso por Persona e Consentimento LGPD (`RF01`, `RNF05`, `RN03`):** Seleção simulada, sem autenticação real, entre as 3 Personas (*Mariana Costa — Moradora*, *Cap. Roberto Mendes — Defesa Civil* e *Eng. Lucas Oliveira — Operador CCO*) com coleta granular de consentimento LGPD.
+1. **Tela 1 — Login e Consentimento LGPD (`RF01`, `RNF05`, `RN03`):** Login por usuário ou e-mail e senha nas contas das 3 Personas (*Mariana Costa — Moradora*, *Cap. Roberto Mendes — Defesa Civil* e *Eng. Lucas Oliveira — Operador CCO*), com ciência obrigatória do aviso de privacidade da demonstração e escolhas opcionais e separadas de geolocalização truncada e notificações (recusá-las não impede a entrada; nenhuma localização é pedida ao navegador). O perfil pertence à conta. Veja [Acesso e autenticação](#acesso-e-autenticação).
 2. **Tela 2 — Painel de Acompanhamento e Mapa Interativo (`RF02`, `RF03`, `RF12`, `RNF01`):** Mapa com marcadores por nível de risco, círculos de 500m, indicadores calculados a partir dos eventos carregados, ocorrências ativas por categoria, meta de atualização ($\le 5\text{s}$, não medida) e simulador de leitura de sensor IoT.
 3. **Tela 3 — Lista de Alertas Priorizados (`RF04`, `RN02`):** Listagem ordenada automaticamente pelo **Score de Risco** (`Crítico P1` $\rightarrow$ `Alto P2` $\rightarrow$ `Moderado P3` $\rightarrow$ `Baixo P4`) com filtros por categoria, bairro, nível de risco, estado e confiança.
 4. **Tela 4 — Detalhes do Alerta, Ciclo de Vida UML e Moderação (`RF05`, `RF08`, `RF11`):** Linha do tempo interativa refletindo o **Diagrama de Estados UML** (*Reportado* $\rightarrow$ *Em Validação* $\rightarrow$ *Confirmado* $\rightarrow$ *Alerta Emitido* $\rightarrow$ *Em Monitoramento* $\rightarrow$ *Encerrado / Descartado*), botões de validação cruzada para moradores (`+15%` de confiança) e painel de moderação para agentes.
@@ -37,7 +37,7 @@ Plataforma integrada de monitoramento, validação cruzada e priorização de al
 
 | Arquivo | Papel |
 | :--- | :--- |
-| `index.html` | **Oficial** — Tela 1: acesso (seleção de persona) e consentimento LGPD |
+| `index.html` | **Oficial** — Tela 1: login e consentimento LGPD (única página acessível sem sessão) |
 | `painel.html` | **Oficial** — Tela 2: visão geral, indicadores e mapa (única página que carrega o Leaflet) |
 | `alertas.html` | **Oficial** — Tela 3: lista priorizada pelo Score de Risco (RN02) |
 | `detalhes.html` | **Oficial** — Tela 4: detalhes, ciclo de vida e moderação (`?evento=ID`) |
@@ -49,11 +49,12 @@ Plataforma integrada de monitoramento, validação cruzada e priorização de al
 | `static/css/styles.css` | Estilos comuns (layout com barra lateral, scrollbar, animação) |
 | `static/css/painel.css` | Estilos só do mapa (tiles, popups, pulso P1) |
 | `static/js/boot-guard.js` | Aviso de falha se `main.js` não carregar ou não terminar (script clássico, independente dos módulos) |
-| `static/js/main.js` | Ponto de entrada: cabeçalho, barra lateral, carga dos dados e inicialização só do módulo da página |
-| `static/js/core/` | `rules.js` (RN01/RN02), `data.js` (dados demonstrativos), `api.js` (API Flask), `state.js` (estado e `sessionStorage`), `actions.js` (relato, confirmação, moderação, notificações, zonas), `escape.js` (escape de HTML centralizado) |
+| `static/js/main.js` | Ponto de entrada: no login, só a tela de login; nas páginas internas, verifica a sessão antes de carregar estado, cabeçalho, barra lateral, dados e o módulo da página |
+| `static/js/core/` | `auth.js` (sessão nos dois modos: login, sessão atual, logout, CSRF), `guard.js` (bloqueio das páginas internas e destino seguro após o login), `rules.js` (RN01/RN02), `data.js` (dados demonstrativos), `api.js` (API Flask), `state.js` (estado do usuário e `sessionStorage`), `actions.js` (relato, confirmação, moderação, notificações, zonas), `escape.js` (escape de HTML centralizado) |
 | `static/js/components/` | `header.js`, `sidebar.js`, `toast.js`, `eventPicker.js` (evento na URL, seletor e estado vazio) |
 | `static/js/pages/` | Lógica de cada uma das 8 páginas |
-| `app.py` | **Oficial** — API Flask + SQLite (opcional para navegar no protótipo). Serve apenas as 8 páginas (lista fechada), marcadas para o modo API, e a pasta `static/` |
+| `app.py` | **Oficial** — API Flask + SQLite (opcional para navegar no protótipo). Serve apenas as 8 páginas (lista fechada), marcadas para o modo API, e a pasta `static/`; autentica, controla sessões e verifica perfil nas páginas e na API |
+| `tests/` | `test_auth.py` (autenticação, autorização e regras no Flask, com banco temporário) e `destino.test.mjs` (validação do destino pós-login) |
 | `requirements.txt` | Dependências Python |
 | `package.json`, `package-lock.json`, `tailwind.config.js`, `tailwind.input.css` | Só para regenerar o CSS no desenvolvimento (Tailwind 3.4.17 fixado). Não fazem parte do site publicado |
 | `.gitignore` | Arquivos locais que não entram no repositório |
@@ -83,11 +84,11 @@ Plataforma integrada de monitoramento, validação cruzada e priorização de al
    ```text
    http://localhost:5000
    ```
-   O cabeçalho deve mostrar **"API Flask/SQLite conectada — dados de demonstração"**. A API de eventos fica em `http://localhost:5000/api/events`. As demais telas ficam em `http://localhost:5000/painel.html`, `/alertas.html` etc.; qualquer outro arquivo da pasta (como `app.py` ou o banco) responde 404.
+   Sem conta configurada, ninguém entra: antes, rode `python app.py preparar-contas-demo` (veja [Contas no Flask](#contas-no-flask)). Depois do login, o cabeçalho deve mostrar **"API Flask/SQLite conectada — dados de demonstração"**. A API de eventos fica em `http://localhost:5000/api/events`. As demais telas ficam em `http://localhost:5000/painel.html`, `/alertas.html` etc.; qualquer outro arquivo da pasta (como `app.py` ou o banco) responde 404.
 
    *O servidor aceita conexões apenas desta máquina (`127.0.0.1`, porta 5000) e roda com depuração desligada. É uma execução local de desenvolvimento, não uma configuração de produção.*
 
-   *O arquivo `urban_risk_platform.db` é criado ao lado de `app.py` na primeira execução. As execuções seguintes reaproveitam o banco existente, sem apagar dados nem duplicar os registros iniciais. Para voltar ao estado inicial, pare o servidor e remova manualmente esse arquivo.*
+   *O arquivo `urban_risk_platform.db` é criado ao lado de `app.py` na primeira execução. As execuções seguintes reaproveitam o banco existente, sem apagar dados nem duplicar os registros iniciais; as tabelas de contas e sessões são acrescentadas a um banco já existente sem alterar as outras. Para voltar ao estado inicial, pare o servidor e remova manualmente esse arquivo. Para usar outro arquivo (ex.: testes), defina `URBAN_RISK_DB_PATH`.*
 
 #### Depuração local (opcional, apenas durante o desenvolvimento)
 Para ligar o modo de depuração do Flask de forma explícita, defina a variável `URBAN_RISK_DEBUG=1` antes de iniciar:
@@ -106,7 +107,7 @@ Desligue ao terminar (feche o terminal ou remova a variável). Não use depuraç
 * Para testar localmente por HTTP sem a API, copie **apenas** os 8 arquivos `.html` e a pasta `static/` para uma pasta separada e sirva essa pasta (ex.: `python -m http.server 8000 --bind 127.0.0.1`). Não sirva a pasta do projeto inteira, que contém `app.py` e o banco.
 * **É preciso HTTP:** abrir os arquivos por `file://` não funciona, porque o navegador bloqueia módulos ES nessa origem (cada página mostra um aviso quando isso acontece).
 * Os dois modos usam conjuntos de exemplo diferentes: a API inicia com 3 eventos, e o modo demonstrativo local com 6. As notificações iniciais são geradas a partir do conjunto carregado, então sempre apontam para eventos existentes.
-* **Pelo Flask, se a API não responder,** o cabeçalho sai de "Verificando API local…" em até 5 s e assume o modo demonstrativo.
+* **Pelo Flask, se a lista de eventos não responder** depois do login, o cabeçalho sai de "Verificando API local…" em até 5 s e mostra os eventos demonstrativos locais. A sessão, porém, nunca vira demonstrativa: se o login ou a verificação da sessão no Flask falhar, a tela mostra o erro e nenhuma página interna abre.
 * **Se a tela não carregar**, a faixa vermelha diz o que houve: arquivo JavaScript que não chegou ao navegador (servidor parado ou resposta interrompida; confira o servidor e recarregue) ou erro de JavaScript (detalhes no console). Se o próprio `main.js` falhar, um aviso em amarelo orienta recarregar e verificar a conexão: na hora, quando o navegador informa a falha, ou depois de 15 s sem a tela terminar de carregar. Uma conexão lenta que termina antes disso não mostra aviso; se terminar depois, o aviso some sozinho.
 
 ### Repositório × site publicado
@@ -131,7 +132,7 @@ npm run build:css
 ### Navegação e dados entre páginas
 * A barra lateral liga as 8 páginas por links reais e marca a página atual (`aria-current="page"`). A partir de 1280 px ela fica fixa ao lado do conteúdo; em telas menores (celular, tablet e notebooks pequenos) abre pelo botão de menu do cabeçalho e fecha com o botão ×, tocando fora ou com `Esc`.
 * Detalhes e Origem/Confiança recebem a ocorrência pela URL (ex.: `detalhes.html?evento=EVT-2026-001`); abrir o link diretamente ou atualizar a página mantém o evento. Sem evento, a página mostra um estado vazio com seletor.
-* Persona, consentimentos, zonas, notificações e indicações "Já Normalizou" ficam no `sessionStorage` do navegador (apagado ao fechar a aba). No modo local, os eventos também ficam ali; no modo API, os eventos sempre vêm do SQLite e as alterações (relato, sensor, confirmação, mudança de estado) são gravadas pela API. Zonas, consentimentos, notificações e "Já Normalizou" **não** são gravados no SQLite.
+* Consentimentos, zonas, notificações e indicações "Já Normalizou" ficam no `sessionStorage` do navegador (apagado ao fechar a aba), ligados à conta que entrou; são descartados no logout ou se outra conta entrar na mesma aba. No modo local, os eventos também ficam ali; no modo API, os eventos sempre vêm do SQLite e as alterações (relato, sensor, confirmação, mudança de estado) são gravadas pela API. Zonas, consentimentos, notificações e "Já Normalizou" **não** são gravados no SQLite.
 * **Ver no mapa:** cada notificação abre `painel.html?evento=ID`, que centraliza o mapa, abre o popup e destaca o evento na fila. O painel avisa se o evento não existir, estiver em estado final, estiver oculto pelo filtro ou se o mapa não carregar. Abrir por aí marca a notificação como lida, como os outros links dela.
 * **Ocorrências ativas por categoria:** contam qualquer estado, exceto Encerrado e Descartado, no conjunto carregado no modo atual. Não mudam com o filtro do mapa, e "Eventos por Origem" continua sendo outro indicador.
 * Use apenas dados fictícios nos formulários: o que é digitado fica na sessão do navegador.
@@ -141,13 +142,75 @@ npm run build:css
 * A prioridade (P1–P4) aparece em texto nos selos e nos marcadores do mapa, além da cor.
 * Textos vindos do usuário, da API, da URL ou da sessão são exibidos como texto (escape centralizado em `static/js/core/escape.js`). Isso foi testado com entradas contendo HTML e scripts; não substitui validação no servidor, que a API ainda não faz.
 
-### Perfis e autenticação
-* A Tela 1 apenas **seleciona uma persona**; não há autenticação real. O painel de moderação (RF11) fica indisponível para a persona Moradora e as ações correspondentes são bloqueadas no JavaScript, mas isso é **restrição de interface**, não autorização segura: as rotas da API não verificam perfil.
+## Acesso e autenticação
+
+Os dois modos são escolhidos pela mesma regra de sempre (marca injetada pelo `app.py`) e têm garantias diferentes.
+
+### Contas de demonstração para avaliação
+| Usuário | E-mail fictício | Perfil | Senha |
+| :--- | :--- | :--- | :--- |
+| `mariana` | `mariana@demo.example` | Moradora (visualização, relato e confirmação cruzada) | `1234` |
+| `roberto` | `roberto@demo.example` | Agente Local — Defesa Civil (+ moderação, RF11) | `1234` |
+| `lucas` | `lucas@demo.example` | Operador CCO — Concessionária (+ moderação, RF11) | `1234` |
+
+São credenciais **públicas**, criadas só para a avaliação acadêmica com dados fictícios. Não são senhas pessoais nem recomendação de senha para uso real. No modo estático valem sempre; no Flask, só depois da preparação explícita descrita em [Contas no Flask](#contas-no-flask).
+
+### Acesso demonstrativo (hospedagem estática / link público)
+* As três contas de avaliação (tabela abaixo) aparecem na seção "Contas de demonstração para avaliação" da tela de login. O formulário não é preenchido nem enviado automaticamente.
+* A sessão demonstrativa fica no `sessionStorage` (`urbanRisk.auth.v1` = id da conta e expiração em 2 h). A senha digitada não é guardada.
+* Sem sessão, as páginas internas voltam ao login, preservando o destino. O perfil vem da conta; não há troca de perfil depois de entrar.
+* **Não é autenticação segura.** Não há servidor: qualquer pessoa pode editar o storage ou o JavaScript no navegador e passar pelo bloqueio. Ele só organiza a demonstração. Nenhuma API é consultada neste modo.
+
+### Autenticação real no Flask local
+* `POST /api/auth/login`, `GET /api/auth/session` e `POST /api/auth/logout`. Senhas guardadas só como hash scrypt (`werkzeug.security`, já instalado com o Flask; nenhuma dependência nova).
+* Sessão no servidor (tabela `auth_sessions`): o cookie `urban_risk_sid` leva um token aleatório, e o banco guarda só o SHA-256 dele. Expira em 2 h, é revogada no logout e em toda troca de senha da conta; um cookie revogado ou expirado é recusado mesmo se reenviado. Novo login troca o token.
+* Cookie `HttpOnly` e `SameSite=Lax`; `Secure` quando a requisição chega por HTTPS ou com `URBAN_RISK_COOKIE_SECURE=1` (implantação atrás de proxy HTTPS).
+* CSRF: toda operação que altera dados exige o cabeçalho `X-CSRF-Token` da sessão e recusa `Origin` de outro site. Sem CORS: outro site não lê as respostas nem envia JSON autenticado.
+* Limite de tentativas: 5 falhas por IP + identificador e 20 por IP em 15 min → `429`. A mensagem de erro é a mesma para conta inexistente e senha errada.
+* Identidade e papel vêm do banco. O cliente não define `user_id`, papel, autor, peso-base nem validação institucional: o servidor ignora esses campos do payload.
+* **Segredo de sessão:** não existe, por desenho. Nada é assinado no cliente: a sessão é um token aleatório (`secrets.token_urlsafe`) gerado a cada login, e o servidor guarda só o SHA-256 dele no banco. Por isso não há `SECRET_KEY` para configurar, gerar ou manter estável; as sessões continuam válidas após reiniciar o servidor porque estão no banco. O `app.secret_key` do Flask fica ausente (`None`) e sem valor de reserva: se algum código futuro usar `flask.session`, o Flask recusa com erro em vez de assinar com um segredo público. As senhas ficam só como hash no banco local, que não deve ser versionado; a senha de avaliação `1234` é pública de propósito.
+
+| Rota | Sem sessão | Quem pode |
+| :--- | :--- | :--- |
+| Páginas internas (7) | `302` para `index.html?destino=…` | qualquer conta |
+| `GET /api/events` | `401` JSON | qualquer conta |
+| `POST /api/events` (relato comunitário) | `401` JSON | qualquer conta; autor e peso-base vêm da sessão |
+| `POST /api/events/<id>/confirm` (ação comunitária) | `401` JSON | qualquer conta |
+| `POST /api/simulacoes/sensor` (ferramenta de simulação) | `401` JSON | qualquer conta; o servidor monta a leitura |
+| `PATCH /api/events/<id>/state` (ação institucional) | `401` JSON | só Defesa Civil / CCO; outros: `403` |
+| `DELETE /api/lgpd/forget/<id>` | `401` JSON | só o próprio titular; outros: `403` |
+
+### Contas no Flask
+O banco local não traz senhas. Para a avaliação, prepare as três contas com a senha pública `1234` por um comando explícito:
+```bash
+python app.py preparar-contas-demo
+```
+* O comando lista, para cada conta, se ela será **criada** (não existe no banco) ou terá a senha **redefinida**, e só continua se você digitar `SIM`.
+* A senha é gravada como hash scrypt, como qualquer outra; o login continua verificando o hash, nunca texto puro. Sessões abertas dessas contas são encerradas.
+* Altera só as tabelas de contas e sessões: eventos, zonas e cofre LGPD não mudam.
+* Nunca roda sozinho: iniciar ou reiniciar o servidor (`python app.py`) não cria nem redefine senhas.
+
+Para usar uma senha própria numa conta, em vez da pública: `python app.py definir-senha <mariana|roberto|lucas>` (digitada sem eco, mínimo de 12 caracteres; não use senha pessoal). Conta sem senha definida não entra.
+
+### Logout, histórico e cache
+* "Sair" fica no cabeçalho de todas as páginas internas. No Flask, a sessão só é dada como encerrada depois que o servidor a revoga; se ele não responder, a tela avisa e a sessão continua.
+* O logout apaga só o estado deste usuário no navegador. Banco, eventos compartilhados e dados de outras contas não são tocados.
+* Páginas e respostas da API saem com `Cache-Control: no-store`, e as páginas revalidam a sessão ao voltar pelo histórico. Isso impede reusar a sessão, mas **não torna secreto o HTML já recebido**: o que estava na tela antes do logout pode continuar em capturas, outras abas ou ferramentas do navegador. O que fica protegido são as operações e os dados servidos depois.
+* O destino após o login aceita só as 7 páginas internas, com `?evento=ID` opcional. URLs externas, `//host`, `javascript:` e outros parâmetros levam ao painel.
+
+### Testes
+```bash
+python -m unittest discover -s tests -v   # Flask: banco temporário, nunca o banco local
+node --test tests/destino.test.mjs        # destino pós-login
+```
 
 ---
 
 ## Limitações do protótipo
-* Seleção de persona sem autenticação real; a restrição por perfil é só de interface, e a API não verifica perfil nem valida entradas.
+* **Modo estático:** login e bloqueio de páginas apenas no navegador, contornáveis; não é autenticação.
+* **Flask:** execução local de desenvolvimento (`127.0.0.1`, servidor do Flask), sem HTTPS. Para implantar seria preciso, no mínimo: HTTPS com `URBAN_RISK_COOKIE_SECURE=1`, servidor WSGI de produção, limite de tentativas em armazenamento compartilhado (hoje fica em memória, por processo, e zera ao reiniciar), contas reais com cadastro e recuperação de senha (não existem aqui), expiração por inatividade e revisão de segurança independente. O limite por identificador também permite bloquear temporariamente o login de outra conta a partir do mesmo IP.
+* Foto EXIF e convergência com sensor no relato são declaradas no formulário e não verificadas; a API valida tipos e tamanhos básicos, não o conteúdo.
+* Login e logout não entram na trilha de auditoria (a tabela `audit_logs` continua sem uso).
 * Leitura de sensor, push e entrega de notificações são simulados no navegador; não há integração com sensores, bases oficiais, filas ou WebSockets.
 * Zonas, consentimentos, notificações, exportação e Direito ao Esquecimento valem só para a sessão do navegador.
 * O mapa não se atualiza sozinho; a meta de atualização em até 5 s não é medida. Os indicadores não têm histórico de 24 h.

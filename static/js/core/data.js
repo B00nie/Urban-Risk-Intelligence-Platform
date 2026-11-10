@@ -1,33 +1,7 @@
 // Dados demonstrativos do protótipo (copiados sem alteração da versão de página única).
 // São apenas dados de exemplo: nenhuma pessoa real, credencial ou segredo.
 
-// Personas Definition (Matches Section 1.2 of Google Doc)
-export const PERSONAS = {
-    mariana: {
-        id: 'mariana',
-        name: 'Mariana Costa',
-        role: 'Moradora • Transporte Público',
-        hash: 'Morador Verificado #A8F92B',
-        isAgent: false,
-        icon: 'fa-person-walking-luggage'
-    },
-    roberto: {
-        id: 'roberto',
-        name: 'Cap. Roberto Mendes',
-        role: 'Agente Local • Defesa Civil',
-        hash: 'Agente Oficial #DEFCIV-019',
-        isAgent: true,
-        icon: 'fa-helmet-safety'
-    },
-    lucas: {
-        id: 'lucas',
-        name: 'Eng. Lucas Oliveira',
-        role: 'Operador CCO • Concessionária',
-        hash: 'Operador Técnico #CCO-402',
-        isAgent: true,
-        icon: 'fa-bolt'
-    }
-};
+// Personas: agora são as contas de acesso (static/js/core/auth.js e app.py).
 
 // Initial Seed Events (100% Aligned with RN01 & RN02 Examples from the Doc)
 export const SEED_EVENTS = [

@@ -1,7 +1,10 @@
-// Cabeçalho comum: identificação do protótipo e do modo de dados, simulação de sensor e persona ativa.
+// Cabeçalho comum: identificação do protótipo e do modo de dados, simulação de sensor, usuário conectado e Sair.
 // Compacto no celular: a faixa de protótipo/modo de dados continua sempre visível.
 import * as state from '../core/state.js';
 import { simulateIncomingSensorEvent } from '../core/actions.js';
+import { logout } from '../core/auth.js';
+import { loginUrl } from '../core/guard.js';
+import { showToast } from './toast.js';
 
 export function renderHeader() {
     const header = document.getElementById('appHeader');
@@ -51,20 +54,44 @@ export function renderHeader() {
                     <span class="hidden md:inline">Simular Sensor IoT</span>
                 </button>
 
-                <!-- Persona ativa (leva à Tela 1) -->
-                <a href="index.html" id="activePersonaChip" class="h-10 min-w-10 flex items-center justify-center gap-2 bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 px-3 rounded-lg text-xs transition" title="Trocar persona (Tela 1)">
+                <!-- Usuário conectado: o perfil pertence à conta (para trocar, use Sair) -->
+                <div id="activePersonaChip" class="h-10 min-w-10 flex items-center justify-center gap-2 bg-indigo-600/20 border border-indigo-500/40 px-3 rounded-lg text-xs">
                     <i id="activePersonaIcon" class="fa-solid fa-user-check text-indigo-400" aria-hidden="true"></i>
                     <span class="text-left">
                         <!-- No celular só o ícone aparece; o nome continua acessível ao leitor de tela e no title -->
+                        <span class="sr-only">Conectado como </span>
                         <span id="activePersonaName" class="sr-only sm:not-sr-only sm:block font-semibold text-white leading-none">—</span>
                         <span id="activePersonaRole" class="hidden sm:block text-xs text-indigo-300 mt-0.5">—</span>
                     </span>
-                </a>
+                </div>
+
+                <button type="button" id="btnLogout" class="h-10 min-w-10 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+                    <span class="sr-only md:not-sr-only">Sair</span>
+                </button>
             </div>
         </div>
     `;
     header.querySelector('#btnSimulateSensor').addEventListener('click', () => simulateIncomingSensorEvent());
+    header.querySelector('#btnLogout').addEventListener('click', e => signOut(e.currentTarget));
     updatePersona();
+}
+
+// Sair: encerra a sessão (no Flask, revogada no servidor) e apaga só o estado deste usuário no navegador.
+// Banco, eventos compartilhados e dados de outras contas não são tocados.
+async function signOut(button) {
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    try {
+        await logout();
+    } catch (err) {
+        showToast(err.message, 'warning');
+        button.disabled = false;
+        button.removeAttribute('aria-busy');
+        return;
+    }
+    state.clearUserState();
+    window.location.replace(loginUrl(null, 'saiu'));
 }
 
 function updatePersona() {
@@ -72,7 +99,7 @@ function updatePersona() {
     document.getElementById('activePersonaName').textContent = persona.name;
     document.getElementById('activePersonaRole').textContent = persona.role;
     document.getElementById('activePersonaIcon').className = `fa-solid ${persona.icon} text-indigo-400`;
-    document.getElementById('activePersonaChip').title = `Persona ativa: ${persona.name} — trocar na Tela 1`;
+    document.getElementById('activePersonaChip').title = `Conectado como ${persona.name} (${persona.role})`;
 }
 
 // Chamado depois que os dados foram carregados e a cada mudança de estado.
