@@ -1,0 +1,39 @@
+/* Estilos usados só no painel.html (mapa Leaflet). */
+
+/* Map Container Styling */
+#urbanMap {
+    height: 460px;
+    width: 100%;
+    border-radius: 0.75rem;
+    z-index: 10;
+    background: #1E293B;
+}
+/* Provisório (Etapa 2): escurece os tiles padrão do OpenStreetMap para manter o tema escuro.
+   Afeta só a camada de tiles; marcadores, círculos e atribuição não são filtrados. */
+#urbanMap .leaflet-tile-pane {
+    filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
+}
+.leaflet-popup-content-wrapper {
+    background: #0F172A !important;
+    color: #F8FAFC !important;
+    border: 1px solid #334155;
+    border-radius: 0.75rem !important;
+}
+.leaflet-popup-tip {
+    background: #0F172A !important;
+}
+/* Pulse animation for Critical P1 Pins */
+@keyframes pulse-ring {
+    0% { transform: scale(0.85); opacity: 0.9; }
+    70% { transform: scale(1.75); opacity: 0; }
+    100% { transform: scale(2); opacity: 0; }
+}
+.critical-pulse::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 9999px;
+    background-color: #DC2626;
+    animation: pulse-ring 1.8s infinite;
+    z-index: -1;
+}

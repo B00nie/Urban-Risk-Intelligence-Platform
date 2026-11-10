@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visão geral, mapa e indicadores — Urban Risk Intelligence Platform (GS 2026.2)</title>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Leaflet (só nesta página): mapa georreferenciado -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Estilos comuns às oito páginas -->
+    <link rel="stylesheet" href="static/css/styles.css">
+    <!-- Estilos específicos do mapa -->
+    <link rel="stylesheet" href="static/css/painel.css">
+    <!-- Tailwind gerado (npm run build:css): por último, como o CDN aplicava, para manter a mesma cascata -->
+    <link rel="stylesheet" href="static/css/tailwind.css">
+</head>
+<body data-page="painel" class="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
+    <a href="#conteudo" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-indigo-600 focus:text-white focus:text-xs focus:font-semibold">Pular para o conteúdo</a>
+    <div class="app-shell">
+        <!-- Barra lateral de navegação (preenchida por static/js/components/sidebar.js) -->
+        <aside id="appSidebar" class="app-sidebar" aria-label="Navegação entre as telas"></aside>
+        <div id="sidebarBackdrop" class="app-backdrop" hidden></div>
+
+        <div class="app-column">
+            <!-- Cabeçalho comum (preenchido por static/js/components/header.js) -->
+            <header id="appHeader" class="sticky top-0 z-40 bg-slate-900/95 border-b border-slate-800 px-4 lg:px-8 py-3"></header>
+
+            <!-- Tela 2: Visão geral, mapa e indicadores -->
+            <main id="conteudo" class="page-content flex-1 max-w-[105rem] w-full mx-auto px-4 lg:px-8 py-6">
+                <!-- Aparece só se a inicialização falhar ou não terminar (ver static/js/boot-guard.js) -->
+                <div id="bootNotice" class="boot-notice mb-4 p-4 rounded-xl bg-amber-950/40 border border-amber-500/40 text-sm text-amber-200">
+                    Esta tela não terminou de carregar. Recarregue a página e verifique a conexão e o servidor (Flask ou servidor local). Abrir o arquivo diretamente (file://) não funciona.
+                </div>
+        <section>
+            <!-- Top KPI Analytics Bar (RF12 & RNF01) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-xs text-slate-400">Alertas Ativos (conjunto carregado)</p>
+                        <p id="kpiTotalActive" class="text-2xl font-bold text-white mt-1">6</p>
+                        <p class="text-xs text-red-400 mt-0.5"><span id="kpiCriticalCount">2</span> Críticos (P1) • Ação Imediata</p>
+                    </div>
+                    <div aria-hidden="true" class="shrink-0 w-11 h-11 rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 text-lg">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-xs text-slate-400">Confiança Média (RN01, alertas ativos)</p>
+                        <p id="kpiAvgConfidence" class="text-2xl font-bold text-emerald-400 mt-1">—</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Meta do projeto: &lt; 3% falsos positivos (não medida)</p>
+                    </div>
+                    <div aria-hidden="true" class="shrink-0 w-11 h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-lg">
+                        <i class="fa-solid fa-certificate"></i>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-xs text-slate-400">Meta de Atualização (RNF01)</p>
+                        <p class="text-2xl font-bold text-indigo-400 font-mono mt-1">&le; 5s</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Meta da arquitetura-alvo • não medida no protótipo</p>
+                    </div>
+                    <div aria-hidden="true" class="shrink-0 w-11 h-11 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-lg">
+                        <i class="fa-solid fa-bolt-lightning"></i>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-xs text-slate-400">Eventos por Origem (RF03)</p>
+                        <p id="kpiSourceTotal" class="text-2xl font-bold text-amber-400 mt-1">—</p>
+                        <p id="kpiSourceBreakdown" class="text-xs text-slate-400 mt-0.5">—</p>
+                    </div>
+                    <div aria-hidden="true" class="shrink-0 w-11 h-11 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 text-lg">
+                        <i class="fa-solid fa-network-wired"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ocorrências ativas por categoria (preenchido por static/js/pages/painel.js) -->
+            <div id="categoryCounters"></div>
+
+            <!-- Map Filter Controls & Header -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2 py-0.5 rounded text-xs font-mono font-semibold bg-indigo-500/20 text-indigo-300">TELA 2 • RF02 / RF03 / RF12</span>
+                            <h2 class="text-xl md:text-2xl font-bold text-white tracking-tight">Mapa Georreferenciado de Riscos Urbanos (São Paulo)</h2>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-0.5">
+                            Clique em qualquer marcador ou círculo de impacto (500m) para inspecionar o Score de Risco, a Origem e o Nível de Confiança.
+                        </p>
+                    </div>
+
+                    <!-- Category Filter Pills on Map -->
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <button type="button" data-map-filter="ALL" aria-pressed="false" id="mapFilter-ALL" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition">
+                            Todos
+                        </button>
+                        <button type="button" data-map-filter="ALAGAMENTO" aria-pressed="false" id="mapFilter-ALAGAMENTO" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-house-flood-water text-blue-400"></i> Alagamentos
+                        </button>
+                        <button type="button" data-map-filter="CALOR" aria-pressed="false" id="mapFilter-CALOR" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-temperature-arrow-up text-orange-400"></i> Ilhas de Calor
+                        </button>
+                        <button type="button" data-map-filter="SERVICOS" aria-pressed="false" id="mapFilter-SERVICOS" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-plug-circle-xmark text-amber-400"></i> Energia / Água / Transporte
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Map + Live Priority Sidebar -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                    <!-- Interactive Leaflet Map -->
+                    <div class="lg:col-span-8 relative">
+                        <p id="mapFilterStatus" class="text-xs text-slate-400 mb-2" role="status"></p>
+                        <!-- Evento pedido por painel.html?evento=ID (ex.: "Ver no mapa" na Tela 7) -->
+                        <div id="mapFocusNotice" class="hidden mb-3 p-3 rounded-xl border text-xs flex flex-wrap items-center justify-between gap-2" role="status"></div>
+                        <div id="urbanMap" class="border border-slate-800 shadow-inner" role="region" aria-label="Mapa de riscos de São Paulo"></div>
+                        <p id="mapNotice" class="hidden mt-2 p-3 rounded-xl bg-amber-950/40 border border-amber-500/40 text-xs text-amber-200" role="status"></p>
+                        <!-- Floating Map Legend -->
+                        <div class="mt-3 flex flex-wrap items-center justify-between gap-2 bg-slate-950/90 border border-slate-800 px-3.5 py-2 rounded-xl text-xs">
+                            <div class="flex flex-wrap items-center gap-4">
+                                <span class="font-semibold text-slate-300">Prioridade RN02:</span>
+                                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-red-600 inline-block"></span> Crítico P1 (75–100)</span>
+                                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-orange-600 inline-block"></span> Alto P2 (50–74)</span>
+                                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span> Moderado P3 (30–49)</span>
+                                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span> Baixo P4 (0–29)</span>
+                            </div>
+                            <a href="registro.html" class="text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-plus-circle"></i> Reportar Ocorrência Aqui
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Side Feed: Top Priority Events on Map -->
+                    <div class="lg:col-span-4 flex flex-col justify-between bg-slate-950/70 border border-slate-800 rounded-xl p-4">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-bold text-sm text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-ranking-star text-red-400"></i>
+                                    <span>Fila Prioritária (RN02)</span>
+                                </h3>
+                                <a href="alertas.html" class="text-xs text-indigo-400 hover:underline">Ver Todos (Tela 3)</a>
+                            </div>
+                            <div id="mapSidebarList" class="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
+                                <p class="text-sm text-slate-400" role="status"><i class="fa-solid fa-spinner fa-spin mr-1.5" aria-hidden="true"></i>Carregando dados…</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                            <span><i class="fa-solid fa-layer-group text-indigo-400 mr-1"></i> Raio de Cruzamento: 500m</span>
+                            <a href="confianca.html" class="text-emerald-400 hover:underline font-medium">
+                                Auditar Confiança (Tela 5) &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Ponto de entrada (ES module): inicializa só o necessário para esta página -->
+    <script src="static/js/boot-guard.js"></script>
+    <script type="module" src="static/js/main.js"></script>
+</body>
+</html>

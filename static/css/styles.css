@@ -1,0 +1,121 @@
+/* Urban Risk Intelligence Platform — estilos comuns às oito páginas. */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0B0F19;
+    color: #F1F5F9;
+}
+/* Sem rolagem da página atrás do menu aberto; o espaço da barra de rolagem fica reservado para o conteúdo não pular. */
+html { scrollbar-gutter: stable; }
+html:has(.app-sidebar.is-open) { overflow: hidden; }
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #0F172A; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+/* Estados de interação padronizados */
+:focus-visible {
+    outline: 2px solid #A5B4FC;
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+}
+button:active:not(:disabled),
+a.inline-flex:active,
+a.flex:active {
+    transform: translateY(1px);
+}
+button:disabled,
+button[aria-disabled="true"] {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* Layout: barra lateral + coluna de conteúdo */
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+}
+.app-column {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+/* Até 1279px: barra lateral recolhível sobre o conteúdo (celular, tablet e notebooks pequenos) */
+.app-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 15rem;
+    max-width: 85vw;
+    z-index: 50;
+    overflow-y: auto;
+    background: #0F172A;
+    border-right: 1px solid #1E293B;
+    transform: translateX(-100%);
+    visibility: hidden;
+    /* Ao fechar, fica invisível (e fora da ordem de tabulação) só depois da animação. */
+    transition: transform 0.2s ease, visibility 0s linear 0.2s;
+}
+.app-sidebar.is-open {
+    transform: none;
+    visibility: visible;
+    /* Ao abrir, fica visível na hora, para poder receber o foco. */
+    transition: transform 0.2s ease, visibility 0s;
+}
+.app-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 45;
+    background: rgba(2, 6, 23, 0.7);
+}
+.app-backdrop[hidden] {
+    display: none;
+}
+/* A partir de 1280px: barra lateral fixa ao lado do conteúdo, sem sobreposição */
+@media (min-width: 1280px) {
+    .app-sidebar {
+        position: sticky;
+        height: 100vh;
+        flex-shrink: 0;
+        transform: none;
+        visibility: visible;
+        transition: none;
+    }
+    .app-backdrop {
+        display: none;
+    }
+}
+
+/* Entrada suave do conteúdo da página */
+.page-content {
+    animation: fadeIn 0.22s ease-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Movimento reduzido: sem animações nem transições decorativas */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Aviso de inicialização: boot-guard.js o mostra (.is-visible). A animação só cobre o caso de esse script não chegar. */
+.boot-notice {
+    opacity: 0;
+    animation: bootNoticeShow 0.01s linear 20s forwards;
+}
+.boot-notice.is-visible {
+    opacity: 1;
+    animation: none;
+}
+@keyframes bootNoticeShow {
+    to { opacity: 1; }
+}

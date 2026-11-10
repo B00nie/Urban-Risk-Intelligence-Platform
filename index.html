@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso e consentimento — Urban Risk Intelligence Platform (GS 2026.2)</title>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Estilos comuns às oito páginas -->
+    <link rel="stylesheet" href="static/css/styles.css">
+    <!-- Tailwind gerado (npm run build:css): por último, como o CDN aplicava, para manter a mesma cascata -->
+    <link rel="stylesheet" href="static/css/tailwind.css">
+</head>
+<body data-page="acesso" class="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
+    <a href="#conteudo" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-indigo-600 focus:text-white focus:text-xs focus:font-semibold">Pular para o conteúdo</a>
+    <div class="app-shell">
+        <!-- Barra lateral de navegação (preenchida por static/js/components/sidebar.js) -->
+        <aside id="appSidebar" class="app-sidebar" aria-label="Navegação entre as telas"></aside>
+        <div id="sidebarBackdrop" class="app-backdrop" hidden></div>
+
+        <div class="app-column">
+            <!-- Cabeçalho comum (preenchido por static/js/components/header.js) -->
+            <header id="appHeader" class="sticky top-0 z-40 bg-slate-900/95 border-b border-slate-800 px-4 lg:px-8 py-3"></header>
+
+            <!-- Tela 1: Acesso e consentimento -->
+            <main id="conteudo" class="page-content flex-1 max-w-[105rem] w-full mx-auto px-4 lg:px-8 py-6">
+                <!-- Aparece só se a inicialização falhar ou não terminar (ver static/js/boot-guard.js) -->
+                <div id="bootNotice" class="boot-notice mb-4 p-4 rounded-xl bg-amber-950/40 border border-amber-500/40 text-sm text-amber-200">
+                    Esta tela não terminou de carregar. Recarregue a página e verifique a conexão e o servidor (Flask ou servidor local). Abrir o arquivo diretamente (file://) não funciona.
+                </div>
+        <section>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <!-- Left Column: Persona Selection & Authentication -->
+                <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="inline-block px-2.5 py-1 rounded-md text-xs font-mono font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                            TELA 1 • RF01 / RNF05 / RN03
+                        </span>
+                        <span class="text-xs text-slate-400"><i class="fa-solid fa-key mr-1"></i> Seleção de persona (sem autenticação real)</span>
+                    </div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white tracking-tight mb-2">Acesso à Plataforma e Perfil Operacional</h2>
+                    <p class="text-sm text-slate-400 mb-6">
+                        Selecione uma das <strong>Personas documentadas na seção 1.2</strong> para simular a navegação pelos fluxos de Morador, Coordenador da Defesa Civil ou Operador de Serviço Público (CCO).
+                    </p>
+
+                    <!-- Persona Cards -->
+                    <div class="space-y-3 mb-6">
+                        <!-- Persona 1: Mariana -->
+                        <div data-persona="mariana" role="button" tabindex="0" id="personaCard-mariana" class="cursor-pointer p-4 rounded-xl border-2 border-indigo-500 bg-indigo-950/30 transition flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 text-xl shrink-0">
+                                <i class="fa-solid fa-person-walking-luggage"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+                                    <h3 class="font-bold text-white">Mariana Costa (29 anos)</h3>
+                                    <span class="px-2 py-0.5 rounded text-xs font-semibold bg-indigo-500/30 text-indigo-200">Moradora • Transporte Público</span>
+                                </div>
+                                <p class="text-xs text-slate-300 mt-1">
+                                    Reside na Zona Sul (Vila Mariana) e trabalha no Centro. Recebe alertas proativos de enchentes e quedas de luz na sua rota e envia relatos colaborativos anonimizados.
+                                </p>
+                                <div class="mt-2 flex flex-wrap gap-2 text-xs font-mono text-slate-400">
+                                    <span><i class="fa-solid fa-fingerprint text-emerald-400"></i> ID Público: Morador #A8F92B</span>
+                                    <span class="hidden sm:inline" aria-hidden="true">•</span>
+                                    <span>Permissão: Visualização, Relato (RF07) e Confirmação Cruzada (RF08)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Persona 2: Cap. Roberto -->
+                        <div data-persona="roberto" role="button" tabindex="0" id="personaCard-roberto" class="cursor-pointer p-4 rounded-xl border border-slate-800 bg-slate-800/40 hover:border-slate-700 transition flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-400 text-xl shrink-0">
+                                <i class="fa-solid fa-helmet-safety"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+                                    <h3 class="font-bold text-white">Cap. Roberto Mendes (44 anos)</h3>
+                                    <span class="px-2 py-0.5 rounded text-xs font-semibold bg-red-500/20 text-red-300">Agente Local • Defesa Civil</span>
+                                </div>
+                                <p class="text-xs text-slate-300 mt-1">
+                                    Coordenador de Operações de Campo. Audita a origem e confiança de cada alerta, valida chamados manualmente (eleva NC para 95%) e gerencia estados de emergência.
+                                </p>
+                                <div class="mt-2 flex flex-wrap gap-2 text-xs font-mono text-slate-400">
+                                    <span><i class="fa-solid fa-id-badge text-amber-400"></i> Credencial: DEFCIV-SP-019</span>
+                                    <span class="hidden sm:inline" aria-hidden="true">•</span>
+                                    <span>Permissão Total: Moderação e Mudança de Estado (RF11)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Persona 3: Eng. Lucas -->
+                        <div data-persona="lucas" role="button" tabindex="0" id="personaCard-lucas" class="cursor-pointer p-4 rounded-xl border border-slate-800 bg-slate-800/40 hover:border-slate-700 transition flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-xl shrink-0">
+                                <i class="fa-solid fa-bolt"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+                                    <h3 class="font-bold text-white">Eng. Lucas Oliveira (35 anos)</h3>
+                                    <span class="px-2 py-0.5 rounded text-xs font-semibold bg-amber-500/20 text-amber-300">Operador CCO • Concessionária</span>
+                                </div>
+                                <p class="text-xs text-slate-300 mt-1">
+                                    Operador Técnico do Centro de Controle Operacional (Energia, Água e Transporte). Cruza telemetria com clusters de relatos comunitários num raio de 500m.
+                                </p>
+                                <div class="mt-2 flex flex-wrap gap-2 text-xs font-mono text-slate-400">
+                                    <span><i class="fa-solid fa-tower-broadcast text-amber-400"></i> Credencial: CCO-INFRA-402</span>
+                                    <span class="hidden sm:inline" aria-hidden="true">•</span>
+                                    <span>Permissão: Validação Técnica de Serviços e Previsão de Retorno (RF11)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Button to Enter Platform -->
+                    <button type="button" id="btnEnterPlatform" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Entrar como Persona Selecionada (simulado) e Abrir o Painel (Tela 2)</span>
+                    </button>
+                </div>
+
+                <!-- Right Column: Explicit LGPD Consent & Data Sanitizer Architecture -->
+                <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                            <i class="fa-solid fa-user-lock text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white">Termo Granular de Privacidade (LGPD)</h3>
+                            <p class="text-xs text-slate-400">Lei nº 13.709/2018 • Camada Transversal Data Sanitizer</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3 text-xs text-slate-300">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" id="lgpdConsentGeo" checked class="mt-1 w-4 h-4 rounded accent-indigo-500">
+                            <span>
+                                <strong class="text-white">Geolocalização Truncada (Raio de 100m - RN03):</strong> Autorizo o uso da minha localização apenas para recebimento de alertas nas minhas zonas e validação de ocorrências, com dispersão automática de 100m para ocultar minha residência exata.
+                            </span>
+                        </label>
+                        <hr class="border-slate-800">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" id="lgpdConsentAnon" checked class="mt-1 w-4 h-4 rounded accent-indigo-500">
+                            <span>
+                                <strong class="text-white">Anonimização na Origem (Pseudonimização):</strong> Estou ciente de que meus relatos comunitários são desacoplados do meu nome civil e CPF no API Gateway, exibindo publicamente apenas o código <code class="text-emerald-400">#ID-Hash</code>.
+                            </span>
+                        </label>
+                        <hr class="border-slate-800">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" id="lgpdConsentPush" checked class="mt-1 w-4 h-4 rounded accent-indigo-500">
+                            <span>
+                                <strong class="text-white">Notificações Prioritárias de Risco (P1 a P4):</strong> Aceito receber avisos emergenciais sobre alagamentos, ilhas de calor e interrupções de serviços essenciais nas zonas que eu cadastrar.
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Architectural Security Proof Box -->
+                    <div class="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-xs space-y-2">
+                        <div class="font-semibold text-emerald-300 flex items-center gap-2">
+                            <i class="fa-solid fa-shield-check"></i>
+                            <span>Segurança e LGPD (RNF05) — o que este protótipo demonstra:</span>
+                        </div>
+                        <ul class="space-y-1 text-slate-300 list-disc list-inside">
+                            <li><strong>Arquitetura-alvo (não implementada aqui):</strong> autenticação JWT, TLS 1.3 em trânsito e AES-256 em repouso no Cofre LGPD.</li>
+                            <li><strong>API Flask/SQLite:</strong> tabelas separadas para eventos e dados pessoais; pseudonimização por hash e truncamento de coordenadas.</li>
+                            <li><strong>Demonstração na Tela 8:</strong> portabilidade (JSON) e Direito ao Esquecimento.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Ponto de entrada (ES module): inicializa só o necessário para esta página -->
+    <script src="static/js/boot-guard.js"></script>
+    <script type="module" src="static/js/main.js"></script>
+</body>
+</html>

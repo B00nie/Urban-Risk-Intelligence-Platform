@@ -1,0 +1,11 @@
+{
+  "name": "urban-risk-intelligence-platform",
+  "private": true,
+  "description": "Só para gerar static/css/tailwind.css no desenvolvimento. O site publicado não executa Node.",
+  "scripts": {
+    "build:css": "tailwindcss -c tailwind.config.js -i tailwind.input.css -o static/css/tailwind.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17"
+  }
+}

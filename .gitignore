@@ -1,0 +1,12 @@
+# Banco SQLite local (gerado por app.py; contém o cofre LGPD de teste)
+*.db
+*.db-journal
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node (só para gerar static/css/tailwind.css; o CSS gerado é versionado)
+node_modules/

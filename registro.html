@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro comunitário — Urban Risk Intelligence Platform (GS 2026.2)</title>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Estilos comuns às oito páginas -->
+    <link rel="stylesheet" href="static/css/styles.css">
+    <!-- Tailwind gerado (npm run build:css): por último, como o CDN aplicava, para manter a mesma cascata -->
+    <link rel="stylesheet" href="static/css/tailwind.css">
+</head>
+<body data-page="registro" class="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
+    <a href="#conteudo" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-indigo-600 focus:text-white focus:text-xs focus:font-semibold">Pular para o conteúdo</a>
+    <div class="app-shell">
+        <!-- Barra lateral de navegação (preenchida por static/js/components/sidebar.js) -->
+        <aside id="appSidebar" class="app-sidebar" aria-label="Navegação entre as telas"></aside>
+        <div id="sidebarBackdrop" class="app-backdrop" hidden></div>
+
+        <div class="app-column">
+            <!-- Cabeçalho comum (preenchido por static/js/components/header.js) -->
+            <header id="appHeader" class="sticky top-0 z-40 bg-slate-900/95 border-b border-slate-800 px-4 lg:px-8 py-3"></header>
+
+            <!-- Tela 6: Registro comunitário -->
+            <main id="conteudo" class="page-content flex-1 max-w-[105rem] w-full mx-auto px-4 lg:px-8 py-6">
+                <!-- Aparece só se a inicialização falhar ou não terminar (ver static/js/boot-guard.js) -->
+                <div id="bootNotice" class="boot-notice mb-4 p-4 rounded-xl bg-amber-950/40 border border-amber-500/40 text-sm text-amber-200">
+                    Esta tela não terminou de carregar. Recarregue a página e verifique a conexão e o servidor (Flask ou servidor local). Abrir o arquivo diretamente (file://) não funciona.
+                </div>
+        <section>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left: 3-Step Community Report Form -->
+                <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                    <span class="inline-block px-2.5 py-1 rounded-md text-xs font-mono font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                        TELA 6 (OBRIGATÓRIA) • RF07 / RNF04 (&le; 3 CLIQUES) / RN03 (LGPD)
+                    </span>
+                    <h2 class="text-xl md:text-2xl font-bold text-white tracking-tight mt-2 mb-1">Registro Comunitário de Ocorrência Urbana</h2>
+                    <p class="text-xs text-slate-400 mb-6">
+                        Reporte incidentes na sua rua ou trajeto. Seus dados pessoais são automaticamente anonimizados pelo <strong>Data Sanitizer (RN03)</strong> antes da publicação.
+                    </p>
+
+                    <form id="communityReportForm" class="space-y-5">
+                        <!-- PASSO 1: Categoria do Risco -->
+                        <div>
+                            <p id="reportCategoryLegend" class="block text-xs font-bold uppercase tracking-wider text-indigo-300 mb-2">
+                                1. Escolha a Categoria do Risco Urbano (1º Clique)
+                            </p>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" role="radiogroup" aria-labelledby="reportCategoryLegend">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="reportCategory" value="ALAGAMENTO" checked class="peer sr-only">
+                                    <div class="p-3 rounded-xl border border-slate-700 bg-slate-950 peer-checked:border-blue-500 peer-checked:bg-blue-950/40 text-center transition">
+                                        <i class="fa-solid fa-house-flood-water text-blue-400 text-lg mb-1"></i>
+                                        <div class="text-xs font-semibold text-white">Alagamento</div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="reportCategory" value="CALOR" class="peer sr-only">
+                                    <div class="p-3 rounded-xl border border-slate-700 bg-slate-950 peer-checked:border-orange-500 peer-checked:bg-orange-950/40 text-center transition">
+                                        <i class="fa-solid fa-temperature-arrow-up text-orange-400 text-lg mb-1"></i>
+                                        <div class="text-xs font-semibold text-white">Ilha de Calor</div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="reportCategory" value="ENERGIA" class="peer sr-only">
+                                    <div class="p-3 rounded-xl border border-slate-700 bg-slate-950 peer-checked:border-amber-500 peer-checked:bg-amber-950/40 text-center transition">
+                                        <i class="fa-solid fa-plug-circle-xmark text-amber-400 text-lg mb-1"></i>
+                                        <div class="text-xs font-semibold text-white">Falta de Energia</div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="reportCategory" value="AGUA" class="peer sr-only">
+                                    <div class="p-3 rounded-xl border border-slate-700 bg-slate-950 peer-checked:border-cyan-500 peer-checked:bg-cyan-950/40 text-center transition">
+                                        <i class="fa-solid fa-faucet-drip text-cyan-400 text-lg mb-1"></i>
+                                        <div class="text-xs font-semibold text-white">Falta de Água</div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="reportCategory" value="TRANSPORTE" class="peer sr-only">
+                                    <div class="p-3 rounded-xl border border-slate-700 bg-slate-950 peer-checked:border-purple-500 peer-checked:bg-purple-950/40 text-center transition">
+                                        <i class="fa-solid fa-train-subway text-purple-400 text-lg mb-1"></i>
+                                        <div class="text-xs font-semibold text-white">Falha Transporte</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- PASSO 2: Localização e Severidade Percebida -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="reportLocation" class="block text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1">
+                                    2. Bairro / Zona Georreferenciada (2º Clique)
+                                </label>
+                                <select id="reportLocation" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
+                                    <option value="Vila Mariana (Zona Sul)|-23.5891|-46.6346">Vila Mariana (Zona Sul) — Próximo ao Metrô</option>
+                                    <option value="Av. Paulista / Bela Vista|-23.5641|-46.6524">Av. Paulista / Bela Vista (Campus FIAP)</option>
+                                    <option value="Pinheiros (Zona Oeste)|-23.5672|-46.6938">Pinheiros — Largo da Batata</option>
+                                    <option value="Centro Histórico (Sé / Anhangabaú)|-23.5489|-46.6388">Centro Histórico (Sé / Vale do Anhangabaú)</option>
+                                    <option value="Mooca / Tamanduateí (Zona Leste)|-23.5610|-46.5975">Mooca / Av. do Estado (Zona Leste)</option>
+                                    <option value="Itaquera (Zona Leste)|-23.5415|-46.4710">Itaquera — Terminal Urbano</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="reportSeverity" class="block text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1">
+                                    Severidade Percebida no Local (Escala S: 1 a 4)
+                                </label>
+                                <select id="reportSeverity" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
+                                    <option value="1">Nível 1 (Leve • Poças / Falha pontual em 1 quadra)</option>
+                                    <option value="2">Nível 2 (Moderado • Lâmina 15-30cm / Trânsito lento)</option>
+                                    <option value="3" selected>Nível 3 (Severo • Via bloqueada / Bairro sem serviço)</option>
+                                    <option value="4">Nível 4 (Extremo • Transbordamento / Risco à vida)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Impact & Description -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="reportImpact" class="block text-xs font-semibold text-slate-300 mb-1">Impacto Urbano Estimado (Escala I: 1 a 4)</label>
+                                <select id="reportImpact" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
+                                    <option value="1">Impacto 1 (&lt; 100 pessoas / Rua residencial)</option>
+                                    <option value="2">Impacto 2 (100 a 1.000 pessoas / Comércio local)</option>
+                                    <option value="3" selected>Impacto 3 (1.000 a 10.000 / Avenida ou Estação)</option>
+                                    <option value="4">Impacto 4 (&gt; 10.000 / Hospital ou Eixo Principal)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="reportTitle" class="block text-xs font-semibold text-slate-300 mb-1">Título / Ponto de Referência</label>
+                                <input type="text" id="reportTitle" required maxlength="120" placeholder="Ex.: Água subindo na saída do Metrô..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="reportDescription" class="block text-xs font-semibold text-slate-300 mb-1">Descrição Breve da Situação</label>
+                            <textarea id="reportDescription" rows="2" required maxlength="600" placeholder="Descreva o que está acontecendo para orientar moradores e agentes locais..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white outline-none focus:border-indigo-500"></textarea>
+                        </div>
+
+                        <!-- PASSO 3: Evidência Fotográfica EXIF & Cruzamento -->
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" id="reportHasPhoto" checked class="mt-0.5 w-4 h-4 rounded accent-emerald-500">
+                                <span class="text-xs text-slate-300">
+                                    <strong class="text-emerald-400"><i class="fa-solid fa-camera mr-1"></i> Anexar Foto com Metadados EXIF Válidos (+15% Confiança RN01):</strong> Simular envio de fotografia capturada no local com coordenadas GPS e data/hora autenticadas.
+                                </span>
+                            </label>
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" id="reportHasSensorMatch" class="mt-0.5 w-4 h-4 rounded accent-indigo-500">
+                                <span class="text-xs text-slate-300">
+                                    <strong class="text-indigo-400"><i class="fa-solid fa-satellite-dish mr-1"></i> Simular Convergência com Sensor IoT Próximo (Eleva para 95% RN01):</strong> Testar regra em que o relato do morador coincide com leitura anormal de sensor num raio de 500m.
+                                </span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/20 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>3. Enviar Relato Anonimizado e Processar no Motor de Regras (3º Clique)</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right: Live Simulation of RN01, RN02 & RN03 Before Submitting -->
+                <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-base text-white flex items-center gap-2 mb-4">
+                            <i class="fa-solid fa-microchip text-indigo-400"></i>
+                            <span>Simulador Prévio do Motor de Regras</span>
+                        </h3>
+
+                        <!-- Live Confidence & Score Preview Box -->
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-slate-400">Nível de Confiança Inicial (RN01):</span>
+                                <span id="previewConfidenceBadge" class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-blue-500/20 text-blue-300">50% • Confirmado</span>
+                            </div>
+                            <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="previewConfidenceBar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 50%"></div>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+                                <span class="text-xs text-slate-400">Score de Risco Calculado (RN02):</span>
+                                <span id="previewRiskScore" class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300">38 pts • Moderado (P3)</span>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+                                <span class="text-xs text-slate-400">Estado Inicial no Diagrama UML:</span>
+                                <span id="previewInitialState" class="font-mono text-xs font-semibold text-emerald-400">Confirmado &rarr; Alerta Emitido</span>
+                            </div>
+                        </div>
+
+                        <!-- LGPD Data Sanitizer Preview -->
+                        <div class="mt-5 p-4 rounded-xl bg-slate-950/90 border border-emerald-500/30 space-y-2">
+                            <div class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-user-secret"></i>
+                                <span>Payload Público Após Anonimização (RN03):</span>
+                            </div>
+                            <pre id="previewSanitizedJson" class="text-xs font-mono text-slate-300 overflow-x-auto leading-relaxed"></pre>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 p-3.5 rounded-xl bg-indigo-950/30 border border-indigo-500/30 text-xs text-indigo-200">
+                        <i class="fa-solid fa-circle-info mr-1"></i>
+                        <strong>Nota da Regra RN01:</strong> Relatos enviados <em>sem foto</em> e <em>sem sensor próximo</em> iniciam com <strong>35% de confiança</strong> (ficando retidos no estado <code>Em Validação</code> até receberem confirmação na Tela 4).
+                    </div>
+                </div>
+            </div>
+        </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Ponto de entrada (ES module): inicializa só o necessário para esta página -->
+    <script src="static/js/boot-guard.js"></script>
+    <script type="module" src="static/js/main.js"></script>
+</body>
+</html>

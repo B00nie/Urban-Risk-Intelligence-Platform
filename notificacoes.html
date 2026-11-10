@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de notificações — Urban Risk Intelligence Platform (GS 2026.2)</title>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Estilos comuns às oito páginas -->
+    <link rel="stylesheet" href="static/css/styles.css">
+    <!-- Tailwind gerado (npm run build:css): por último, como o CDN aplicava, para manter a mesma cascata -->
+    <link rel="stylesheet" href="static/css/tailwind.css">
+</head>
+<body data-page="notificacoes" class="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
+    <a href="#conteudo" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-indigo-600 focus:text-white focus:text-xs focus:font-semibold">Pular para o conteúdo</a>
+    <div class="app-shell">
+        <!-- Barra lateral de navegação (preenchida por static/js/components/sidebar.js) -->
+        <aside id="appSidebar" class="app-sidebar" aria-label="Navegação entre as telas"></aside>
+        <div id="sidebarBackdrop" class="app-backdrop" hidden></div>
+
+        <div class="app-column">
+            <!-- Cabeçalho comum (preenchido por static/js/components/header.js) -->
+            <header id="appHeader" class="sticky top-0 z-40 bg-slate-900/95 border-b border-slate-800 px-4 lg:px-8 py-3"></header>
+
+            <!-- Tela 7: Central de notificações -->
+            <main id="conteudo" class="page-content flex-1 max-w-[105rem] w-full mx-auto px-4 lg:px-8 py-6">
+                <!-- Aparece só se a inicialização falhar ou não terminar (ver static/js/boot-guard.js) -->
+                <div id="bootNotice" class="boot-notice mb-4 p-4 rounded-xl bg-amber-950/40 border border-amber-500/40 text-sm text-amber-200">
+                    Esta tela não terminou de carregar. Recarregue a página e verifique a conexão e o servidor (Flask ou servidor local). Abrir o arquivo diretamente (file://) não funciona.
+                </div>
+        <section>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-800">
+                    <div>
+                        <span class="inline-block px-2.5 py-1 rounded-md text-xs font-mono font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                            TELA 7 (OBRIGATÓRIA) • RF09 / RNF01 / RNF03 • ENTREGA SIMULADA
+                        </span>
+                        <h2 class="text-xl md:text-2xl font-bold text-white tracking-tight mt-2">Central de Notificações e Alertas Direcionados</h2>
+                        <p class="text-sm text-slate-400">
+                            Avisos dos alertas com confiança &ge; 50% (RN01) nas zonas monitoradas. Prioridade, score e confiança são calculados pelas regras RN01/RN02 a partir do evento.
+                            Neste protótipo a entrega é gerada no navegador; fila prioritária, push e a meta de &le; 5s (RNF01) pertencem à arquitetura-alvo.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" id="btnSimulatePush" class="bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-volume-high"></i> Simular Push do Alerta de Maior Score
+                        </button>
+                        <button type="button" id="btnMarkAllRead" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-2 rounded-xl text-xs font-medium transition">
+                            <i class="fa-solid fa-check-double mr-1"></i> Marcar Todas como Lidas
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Notifications List -->
+                <div id="notificationsContainer" class="space-y-3">
+                    <p class="text-sm text-slate-400" role="status"><i class="fa-solid fa-spinner fa-spin mr-1.5" aria-hidden="true"></i>Carregando dados…</p>
+                </div>
+            </div>
+        </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Ponto de entrada (ES module): inicializa só o necessário para esta página -->
+    <script src="static/js/boot-guard.js"></script>
+    <script type="module" src="static/js/main.js"></script>
+</body>
+</html>
